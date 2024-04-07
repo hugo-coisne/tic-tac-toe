@@ -138,20 +138,25 @@ const createPlayer = function (name, char) {
   };
   const place = function (x, y) {
     if (gameboard.isOver()) {
-      return;
+      throw new Error(`The game is over !`);
     }
-    if (gameboard.getTurnPlayer() == this) {
+    if (!gameboard.getPlayers().includes(this)) {
+      throw new Error(`${this.name} is not part of the game !`);
+    }
+    if (gameboard.getTurnPlayer() != this) {
+      throw new Error(`It is ${gameboard.getTurnPlayer().getName()}'s turn, not ${this.name}'s !`);
+    }
+
       gameboard.place(char, x, y);
-      console.log(`${this.getName()} has placed `);
+    console.log(`${this.getName()} has placed at (${x},${y})`);
       if (gameboard.checkWin()) {
         setWinner();
         console.log(`${name} wins !`);
       }
-    } else {
-      throw new Error(`It is ${gameboard.getTurnPlayer().getName()}'s turn !`);
-    }
+  
   };
   const getName = () => name;
+
   const player = { getScore, place, getName, isWinner };
   gameboard.addPlayer(player);
   return player;
