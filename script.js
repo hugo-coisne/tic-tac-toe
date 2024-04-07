@@ -6,7 +6,7 @@ const gameboard = (function () {
     [a, a, a],
   ];
 
-  const players = [a, a];
+  const players = [];
 
   let turn = 0;
 
@@ -14,14 +14,18 @@ const gameboard = (function () {
     for (let i = 0; i < 3; i++) {
       console.log(game[i]);
     }
-    console.log("players : ");
-    for (let i = 0; i < 2; i++) {
+    if (players.length > 0) {
+      console.log("player(s) : ");
+      for (let i = 0; i < this.getPlayers().length; i++) {
+        var string = " - " + players[i].getName();
       if (players[i] == players[turn]) {
-        console.log(" - " + players[i].getName() + " (turn to play)");
-      } else {
-        console.log(" - " + players[i].getName());
+          string += " (turn to play)";
+        }
+        console.log(string);
       }
-    }
+    } else {
+      console.log("no players yet");
+      }
   };
 
   const place = function (char, x, y) {
