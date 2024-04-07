@@ -89,6 +89,9 @@ const gameboard = (function () {
   };
 
   const addPlayer = function (player) {
+    if (gameboard.getPlayers().length >1) {
+      throw new Error("the game is full");
+    }
     players[turn] = player;
     console.log(`${player.getName()} has been added to the game !`);
     nextPlayer();
