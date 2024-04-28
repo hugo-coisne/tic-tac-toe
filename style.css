@@ -1,0 +1,31 @@
+html,
+body {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+#gameboardContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh; /* Ensure the body takes up the full height of the viewport */
+  width: 100%;
+  margin: 0; /* Remove default margin */
+  position: fixed;
+}
+
+#gameboard {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  gap: 5px; /* Adjust this value to add spacing between cells */
+  aspect-ratio: 1 / 1;
+  height: 50%; /* Adjust the height of the gameboard */
+  border: 2px solid #333; /* Add border for visual clarity */
+}
+
+.cell {
+  background-color: #eee; /* Add background color for cells */
+  border: 1px solid #ccc; /* Add border for cells */
+}
