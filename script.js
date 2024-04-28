@@ -1,6 +1,6 @@
-const gameboard = (function () {
+const game = (function () {
   const a = " ";
-  const game = [
+  const gameboard = [
     [a, a, a],
     [a, a, a],
     [a, a, a],
@@ -10,36 +10,63 @@ const gameboard = (function () {
 
   let turn = 0;
 
-  const logGame = function () {
+  const logBoard = function () {
     for (let i = 0; i < 3; i++) {
-      console.log(game[i]);
+      console.log(gameboard[i]);
     }
-    if (players.length > 0) {
+  }
+
+  const logPlayers = function () {
+    const size = players.length;
+    if ( size > 0) {
       console.log("player(s) : ");
-      for (let i = 0; i < this.getPlayers().length; i++) {
-        var string = " - " + players[i].getName();
-      if (players[i] == players[turn]) {
+      for (let i = 0; i < size; i++) {
+        const p = players[i];
+        var string = " - " + p.getName() + " : char = " + p.getChar() + ", score = " + p.getScore() + ", winner = " + p.isWinner();
+
+        if (players[i] == players[turn]) {
           string += " (turn to play)";
         }
         console.log(string);
       }
     } else {
       console.log("no players yet");
-      }
+    }
+  }
+
+  const logGame = function () {
+    logBoard();
+    logPlayers();
   };
 
-  const place = function (char, x, y) {
+  const place = function (player, x, y) {
+    if (this.isOver()) {
+      throw new Error(`The game is over !`);
+    }
+    if (!this.getPlayers().includes(player)) {
+      throw new Error(`${this.name} is not part of the game !`);
+    }
+    if (this.getTurnPlayer() != player) {
+      throw new Error(`It is ${this.getTurnPlayer().getName()}'s turn, not ${player.getName()}'s !`);
+    }
     if (x > 2 || y > 2 || x < 0 || y < 0) {
       throw new Error(
-        `Les coordonées doivent être comprises entre 0 et 2 inclus. (${x},${y})`
+        `x and y coordinates must be within the [0,2] range. (${x},${y})`
       );
     }
-    if (game[y][x] == " ") {
-      game[y][x] = char;
-      nextPlayer();
-    } else {
+    if (gameboard[y][x] != " ") {
       throw new Error(`The (${x},${y}) slot already is taken.`);
     }
+    gameboard[y][x] = player.getChar();
+    console.log(`${player.getName()} has placed at (${x},${y})`);
+    logBoard();
+    if (this.checkWin()) {
+      player.setWinner();
+      console.log(`${player.getName()} wins !`);
+      logPlayers();
+      return;
+    }
+    nextPlayer();
   };
 
   const checkWin = function () {
@@ -48,39 +75,39 @@ const gameboard = (function () {
     for (let i = 0; i < 3; i++) {
       // Check rows
       if (
-        game[i][0] === game[i][1] &&
-        game[i][1] === game[i][2] &&
-        game[i][2] != a
+        gameboard[i][0] === gameboard[i][1] &&
+        gameboard[i][1] === gameboard[i][2] &&
+        gameboard[i][2] != a
       ) {
-        console.log("row win");
+        // console.log("row win");
         return true;
       }
       // Check columns
       if (
-        game[0][i] === game[1][i] &&
-        game[1][i] === game[2][i] &&
-        game[2][i] != a
+        gameboard[0][i] === gameboard[1][i] &&
+        gameboard[1][i] === gameboard[2][i] &&
+        gameboard[2][i] != a
       ) {
-        console.log("column win");
+        // console.log("column win");
         return true;
       }
     }
 
     // Check diagonals
     if (
-      game[0][0] === game[1][1] &&
-      game[1][1] === game[2][2] &&
-      game[2][2] != a
+      gameboard[0][0] === gameboard[1][1] &&
+      gameboard[1][1] === gameboard[2][2] &&
+      gameboard[2][2] != a
     ) {
-      console.log("diagonal win");
+      // console.log("diagonal win");
       return true;
     }
     if (
-      game[0][2] === game[1][1] &&
-      game[1][1] === game[2][0] &&
-      game[2][0] != a
+      gameboard[0][2] === gameboard[1][1] &&
+      gameboard[1][1] === gameboard[2][0] &&
+      gameboard[2][0] != a
     ) {
-      console.log("diagonal win");
+      // console.log("diagonal win");
       return true;
     }
 
@@ -89,7 +116,7 @@ const gameboard = (function () {
   };
 
   const addPlayer = function (player) {
-    if (gameboard.getPlayers().length >1) {
+    if (this.getPlayers().length >1) {
       throw new Error("the game is full");
     }
     players[turn] = player;
@@ -110,17 +137,22 @@ const gameboard = (function () {
   };
 
   const isOver = function () {
+    if(this.getPlayers().length<2){
+      throw new Error("game has not started yet");
+    }
     return players[0].isWinner() || players[1].isWinner();
   };
 
   return {
     logGame,
+    logBoard,
+    logPlayers,
     place,
     checkWin,
     addPlayer,
     getTurnPlayer,
     getPlayers,
-    isOver,
+    isOver
   };
 })();
 
@@ -137,27 +169,11 @@ const createPlayer = function (name, char) {
     return winner;
   };
   const place = function (x, y) {
-    if (gameboard.isOver()) {
-      throw new Error(`The game is over !`);
-    }
-    if (!gameboard.getPlayers().includes(this)) {
-      throw new Error(`${this.name} is not part of the game !`);
-    }
-    if (gameboard.getTurnPlayer() != this) {
-      throw new Error(`It is ${gameboard.getTurnPlayer().getName()}'s turn, not ${this.name}'s !`);
-    }
-
-      gameboard.place(char, x, y);
-    console.log(`${this.getName()} has placed at (${x},${y})`);
-      if (gameboard.checkWin()) {
-        setWinner();
-        console.log(`${name} wins !`);
-      }
-  
+    game.place(this, x, y);
   };
   const getName = () => name;
+  const getChar = () => char;
 
-  const player = { getScore, place, getName, isWinner };
-  gameboard.addPlayer(player);
+  const player = { getScore, place, getName, isWinner, getChar, setWinner };
   return player;
 };
