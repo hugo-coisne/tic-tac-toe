@@ -8,7 +8,32 @@
     <script src="script.js" defer></script>
   </head>
   <body>
-    <div id="gameboardContainer">
+    <div id="gameContainer">
+    <div id="scoreContainer">
+      <div id="scoreDisplay">
+        <h1>Score
+        <div id="scoreValue">
+          <div class="playerScore" id="player1score">O</div>
+          -
+          <div class="playerScore" id="player2score">O</div>
+        </div>
+      </div>
+    </h1>
+    </div>
+    <div id="hud">
+      <div id="player1display" class="playerDisplay">
+        <h2 class="playerName">
+          Hugo (
+          <div class="playerChar">X</div>
+          )
+        </h2>
+        <!-- <div class="scoreContainer">
+          <div class="scoreLabel">
+            Score :
+            <div class="playerScore">O</div>
+          </div> 
+        </div>-->
+      </div>
       <div id="gameboard">
         <div class="cell"></div>
         <div class="cell"></div>
@@ -20,6 +45,20 @@
         <div class="cell"></div>
         <div class="cell"></div>
       </div>
+      <div id="player2display" class="playerDisplay">
+        <h2 class="playerName">
+          Victor (
+          <div class="playerChar">O</div>
+          )
+        </h2>
+        <!--<div class="scoreContainer">
+          <div class="scoreLabel">
+            Score :
+            <div class="playerScore">O</div>
+          </div>-->
+        </div>
+      </div>
     </div>
+  </div>
   </body>
 </html>
